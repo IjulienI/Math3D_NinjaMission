@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-
 public class BackStab : MonoBehaviour
 {
     [Header("References")]    
@@ -32,14 +28,22 @@ public class BackStab : MonoBehaviour
         Vector3 direction = player.transform.position - transform.position;
 
         if(direction.magnitude < minDistForStart )
-        {
-            UpdateUI();
+        {            
             GetComponent<MeshRenderer>().material.color = new Color(255, 255, 255, 255);
 
+            UpdateUI();
             if (Vector3.Dot(forward, direction.normalized) > signAngle && direction.magnitude < signDist)
             {
-                CharacterMovemebt.instance.SetCanBackStab(false);
-                warning.SetActive(true);
+                RaycastHit hit;
+                Physics.Raycast(transform.position, direction, out hit);      
+                
+                if (hit.collider.tag == "Player")
+                {
+                    CharacterMovemebt.instance.SetCanBackStab(false);
+                    warning.SetActive(true);
+                    Vector3 rayDirection = hit.collider.transform.position - transform.position;
+                    Debug.DrawRay(transform.position, rayDirection, Color.yellow, 0.1f);
+                }
             }
 
             if (Vector3.Dot(forward, direction.normalized) < -signAngle && Vector3.Dot(forward, player.transform.forward) > backStabAngle && direction.magnitude < backStabDis)
