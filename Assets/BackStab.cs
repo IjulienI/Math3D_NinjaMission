@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class BackStab : MonoBehaviour
 {
-    [Header("References")]
-    [SerializeField] private GameObject player;
+    [Header("References")]    
     [SerializeField] private GameObject warning;
     [SerializeField] private GameObject back;
     [Header("")]
@@ -19,8 +18,14 @@ public class BackStab : MonoBehaviour
     [SerializeField] private float signAngle;
     [Header("Optimisation")]
     [SerializeField] private float minDistForStart;
-    
 
+    private GameObject player;
+
+    private void Start()
+    {
+        UpdateUI();
+        player = CharacterMovemebt.instance.gameObject;
+    }
     private void Update()
     {
         Vector3 forward = transform.forward;
@@ -28,27 +33,31 @@ public class BackStab : MonoBehaviour
 
         if(direction.magnitude < minDistForStart )
         {
-            Debug.Log(gameObject + " Start Detection");
-            if (Vector3.Dot(forward, direction.normalized) < -signAngle && Vector3.Dot(forward, player.transform.forward) > backStabAngle && direction.magnitude < backStabDis)
+            UpdateUI();
+            GetComponent<MeshRenderer>().material.color = new Color(255, 255, 255, 255);
+
+            if (Vector3.Dot(forward, direction.normalized) > signAngle && direction.magnitude < signDist)
             {
-                UpdateUI();
-                back.SetActive(true);
-                player.GetComponent<CharacterMovemebt>().CanBackStab(true);
-            }
-            else if (Vector3.Dot(forward, direction.normalized) > signAngle && direction.magnitude < signDist)
-            {
-                UpdateUI();
+                CharacterMovemebt.instance.SetCanBackStab(false);
                 warning.SetActive(true);
             }
-            else if (direction.magnitude < backStabDis + .1f)
-            {
-                UpdateUI();
-                player.GetComponent<CharacterMovemebt>().CanBackStab(false);
+
+            if (Vector3.Dot(forward, direction.normalized) < -signAngle && Vector3.Dot(forward, player.transform.forward) > backStabAngle && direction.magnitude < backStabDis)
+            {                
+                if (CharacterMovemebt.instance.GetCanBackstab())
+                {
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        Destroy(gameObject);
+                    }
+                    back.SetActive(true);
+                }
+                CharacterMovemebt.instance.SetCanBackStab(true);
             }
-            else
-            {
-                UpdateUI();
-            }
+        }
+        else
+        {
+            GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0, 50);
         }
     }
 

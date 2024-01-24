@@ -10,32 +10,20 @@ public class CharacterMovemebt : MonoBehaviour
     private Vector2 input;
     private Vector2 mouseInput;
     private bool canBackStab;
+    public static CharacterMovemebt instance;
 
+    private void Awake()
+    {
+        instance = this;
+    }
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
     }
-
     private void Update()
     {
         MovementUpdate();
         RotationFixedUpdate();
-        BackStab();
-    }
-
-    private void BackStab()
-    {
-        if (Input.GetKeyDown(KeyCode.E) && canBackStab)
-        {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, transform.forward, out hit, 2f))
-            {
-                if (hit.collider.tag == "Enemie")
-                {
-                    Destroy(hit.collider.gameObject);
-                }
-            }
-        }
     }
     private void MovementUpdate()
     {
@@ -50,9 +38,12 @@ public class CharacterMovemebt : MonoBehaviour
         mouseInput += new Vector2(Input.GetAxis("Mouse X") * camSpeed * Time.fixedDeltaTime, Input.GetAxis("Mouse Y") * camSpeed * Time.fixedDeltaTime);
         transform.rotation = Quaternion.Euler(0, mouseInput.x, 0);
     }
-
-    public void CanBackStab(bool state)
+    public void SetCanBackStab(bool state)
     {
         canBackStab = state;
+    }
+    public bool GetCanBackstab()
+    {
+        return canBackStab;
     }
 }
