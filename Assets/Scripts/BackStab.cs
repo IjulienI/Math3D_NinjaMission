@@ -29,8 +29,6 @@ public class BackStab : MonoBehaviour
 
         if(direction.magnitude < minDistForStart )
         {            
-            GetComponent<MeshRenderer>().material.color = new Color(255, 255, 255, 255);
-
             UpdateUI();
             if (Vector3.Dot(forward, direction.normalized) > signAngle && direction.magnitude < signDist)
             {
@@ -46,7 +44,7 @@ public class BackStab : MonoBehaviour
                 }
             }
 
-            if (Vector3.Dot(forward, direction.normalized) < -signAngle && Vector3.Dot(forward, player.transform.forward) > backStabAngle && direction.magnitude < backStabDis)
+            if (Vector3.Dot(forward, direction.normalized) < -backStabAngle && Vector3.Dot(forward, player.transform.forward) > backStabAngle && direction.magnitude < backStabDis)
             {                
                 if (CharacterMovemebt.instance.GetCanBackstab())
                 {
@@ -58,10 +56,11 @@ public class BackStab : MonoBehaviour
                 }
                 CharacterMovemebt.instance.SetCanBackStab(true);
             }
+            print(gameObject + " : Activate");
         }
         else
         {
-            GetComponent<MeshRenderer>().material.color = new Color(0, 0, 0, 50);
+            print(gameObject + " : desactivate");
         }
     }
 
